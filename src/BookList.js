@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import SearchBar from "./SearchBar";
 import BookTable from "./BookTable";
 
+//redux
+import {connect} from "react-redux"
+
 // Route
 import { useParams } from "react-router-dom";
 
@@ -32,4 +35,12 @@ const BookList = props => {
   );
 };
 
-export default BookList;
+const mapStateToProps = state => {
+  return (
+    {
+      books: state.booksState.books
+    }
+  )
+}
+
+export default connect(mapStateToProps)(BookList);

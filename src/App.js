@@ -9,42 +9,17 @@ import AuthorsList from "./AuthorsList";
 import AuthorDetail from "./AuthorDetail";
 import BookList from "./BookList";
 
+//redux
+import {connect} from "react-redux"
+
 const instance = axios.create({
   baseURL: "https://the-index-api.herokuapp.com"
 });
 
-const App = () => {
-  const [authors, setAuthors] = useState([]);
-  const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState([]);
-
-  useEffect(() => {
-    const fetchAllAuthors = async () => {
-      const res = await instance.get("/api/authors/");
-      return res.data;
-    };
-
-    const fetchAllBooks = async () => {
-      const res = await instance.get("/api/books/");
-      return res.data;
-    };
-    const fetchAll = async () => {
-      try {
-        const authorsData = await fetchAllAuthors();
-        const booksData = await fetchAllBooks();
-
-        setAuthors(authorsData);
-        setBooks(booksData);
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchAll();
-  }, []);
+const App = (props) => {
 
   const getView = () => {
-    if (loading) {
+    if (props.loadingA || props.loadingB) {
       return <Loading />;
     } else {
       return (
@@ -54,10 +29,10 @@ const App = () => {
             <AuthorDetail />
           </Route>
           <Route path="/authors/">
-            <AuthorsList authors={authors} />
+            <AuthorsList />
           </Route>
           <Route path="/books/:bookColor?">
-            <BookList books={books} />
+            <BookList />
           </Route>
         </Switch>
       );
@@ -76,4 +51,13 @@ const App = () => {
   );
 };
 
-export default App;
+const mapStateToProps = state => {
+  return (
+    {
+      loadingA: state.authorsState.loading,
+      loadingB: state.booksState.loading
+    }
+  )
+}
+
+export default connect(mapStateToProps)(App);
